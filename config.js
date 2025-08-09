@@ -100,7 +100,7 @@ module.exports = {
                 jpHexArr.pop()
                 jpHexArr.pop()
             } else break
-        } while(true)
+        } while (true)
         return jpHexArr.join(' ')
     },
     jpHex2Jp: (jpHex) => {
@@ -139,7 +139,28 @@ module.exports = {
         return jp
     },
     text2NameAndMessage: (jp) => {
-        const item = { name: undefined, message: jp }
+        let name = undefined
+        let message = jp
+        if (jp.includes('「')) {
+            // 形如 " 悠 「この時点でのオレは――」"
+            // 把 「 之前的作为 name，把 「 到最后一个」之间的作为 message
+            const firstQuoteIdx = jp.indexOf('「')
+            const lastQuoteIdx = jp.lastIndexOf('」')
+            if (firstQuoteIdx !== -1 && lastQuoteIdx !== -1 && lastQuoteIdx > firstQuoteIdx) {
+                name = jp.slice(0, firstQuoteIdx).trim()
+                message = jp.slice(firstQuoteIdx + 1, lastQuoteIdx)
+            }
+        } else if (jp.includes('〈')) {
+            // 形如 " 悠 〈よしっ――と、これでいい〉"
+            // 把 〈 之前的作为 name，把 〈 到最后一个〉之间的作为 message
+            const firstAngleIdx = jp.indexOf('〈')
+            const lastAngleIdx = jp.lastIndexOf('〉')
+            if (firstAngleIdx !== -1 && lastAngleIdx !== -1 && lastAngleIdx > firstAngleIdx) {
+                name = jp.slice(0, firstAngleIdx).trim()
+                message = jp.slice(firstAngleIdx + 1, lastAngleIdx)
+            }
+        }
+        const item = { name, message }
         return item
     },
     nameAndMessage2Text: ({ name, message }) => {

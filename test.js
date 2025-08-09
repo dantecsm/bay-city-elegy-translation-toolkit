@@ -29,3 +29,18 @@ const jpsWithUpNotEndsWithUpOrNewline = jpsWithUp.filter(jp => {
     return jp.includes(UP)
 })
 console.log(jpsWithUpNotEndsWithUpOrNewline)
+
+// 『〈「
+console.log(jps.length)
+const notOptionJps = jps.filter(jp => !jp.includes('『'))
+console.log(notOptionJps.length)
+const notOptionOrThinkingJps = notOptionJps.filter(jp => !jp.includes('〈'))
+console.log(notOptionOrThinkingJps.length)
+const notOptionOrThinkingOrChatJps = notOptionOrThinkingJps.filter(jp => !jp.includes('「'))
+console.log(notOptionOrThinkingOrChatJps)
+
+// 说明了 「 和 」 是成对的，〈 和 〉也是成对的
+const a = jps.filter(jp => jp.includes('「') && !jp.includes('」'))
+console.log(a.length)
+const b = jps.filter(jp => jp.includes('〈') && !jp.includes('〉'))
+console.log(b.length)
