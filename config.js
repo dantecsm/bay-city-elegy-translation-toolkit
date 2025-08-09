@@ -76,6 +76,14 @@ module.exports = {
                 break
             }
         } while (true)
+        // 去除 jpHexArr 末尾可能连续出现的 '81', '97'
+        while (
+            jpHexArr.length >= 2 &&
+            jpHexArr[jpHexArr.length - 2] === '81' &&
+            jpHexArr[jpHexArr.length - 1] === '97'
+        ) {
+            jpHexArr.splice(jpHexArr.length - 2, 2)
+        }
         return jpHexArr.join(' ')
     },
     jpHex2Jp: (jpHex) => {
