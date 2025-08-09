@@ -1,0 +1,15 @@
+{
+  "name": "bay-city",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "dantecsm <4spadenil@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "table": "node utils/createTable.js",
+    "jp": "node utils/exportJP.js",
+    "cn": "node utils/importCN.js",
+    "cnHex": "node utils/updateCnHex.js",
+    "apply": "node utils/apply.js",
+    "all": "yarn cnHex && yarn apply"
+  }
+}
