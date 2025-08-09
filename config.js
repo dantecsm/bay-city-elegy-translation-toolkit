@@ -10,14 +10,38 @@ module.exports = {
     destROM: '',
     gtInputDir: 'gt_input',
     gtOutputDir: 'gt_output',
-    REG_JP_HEX: /\xAA\x23(\xC5\x23\x28\x10\xC3\x24\x2C\x7F\x7F){0,1}([\x81-\x9F\xE0-\xFC][\s\S]|[\x2E-\x80]|[\xA5\x21\x00])+\xAB/g,
+    // 正则解释
+    // AA 23 是清理对话框的 OP，非选项文本的开头
+    // C3 (){2} 和 C5(){2} 是无关 OP，可以忽略，其中的 () 代表 [23-27], 28 和 [29-2C] 三种分支，分别对应 1, 2, 3 三种长度
+    // 文字有三种模式，一种是 SJIS，一种是 2D-7F 的 82 72+X 的简写，一种是 A5 换行
+    REG_JP_HEX: /\xAA\x23([\xC3\xC5]([\x23-\x27]|\x28[\s\S]|[\x29-\x2C][\s\S]{2}){2}){0,}([\x81-\x9F\xE0-\xFC][\s\S]|[\x2D-\x7F]|[\xA5]|\x21[^\x00]+\x00)+/g,
+    simplifyJpHex: (jpHex) => {
+        // 去掉前面的 AA 23 和无关 OP
+        let jpHexArr = jpHex.split(' ').slice(2)
+        // 去除无关 OP 组（C3/C5）
+        do {
+            const op = jpHexArr[0]
+            if (op === 'C3' || op === 'C5') {
+                let idx = 1
+                for (let i = 0; i < 2; i++) {
+                    const param = jpHexArr[idx]
+                    if (parseInt(param, 16) >= 0x23 && parseInt(param, 16) <= 0x27) {
+                        idx++
+                    } else if (parseInt(param, 16) === 0x28) {
+                        idx += 2
+                    } else if (parseInt(param, 16) >= 0x29 && parseInt(param, 16) <= 0x2C) {
+                        idx += 2
+                    }
+                }
+                jpHexArr.splice(0, idx)
+            } else {
+                break
+            }
+        } while (true)
+        return jpHexArr.join(' ')
+    },
     jpHex2Jp: (jpHex) => {
-        // 去掉前面的 AA 23 和后面的 AB
-        const jpHexArr = jpHex.split(' ').slice(2, -1)
-        // 去掉可能存在的其它前缀
-        if (jpHexArr.join(' ').startsWith('C5 23 28 10 C3 24 2C 7F 7F')) {
-            jpHexArr.splice(0, 9)
-        }
+        const jpHexArr = jpHex.split(' ')
         let jp = ''
         let idx = 0
         while (idx < jpHexArr.length) {
@@ -29,6 +53,19 @@ module.exports = {
             } else if (hex === 0xA5) {
                 jp += '\n'
                 idx += 1
+            } else if (hex === 0x21) {
+                // 处理 0x21 开头的 ascii 片段，直到 0x00 为止
+                let asciiArr = []
+                idx += 1
+                while (idx < jpHexArr.length && parseInt(jpHexArr[idx], 16) !== 0x00) {
+                    asciiArr.push(parseInt(jpHexArr[idx], 16))
+                    idx += 1
+                }
+                // 跳过 0x00
+                if (idx < jpHexArr.length && parseInt(jpHexArr[idx], 16) === 0x00) {
+                    idx += 1
+                }
+                jp += Buffer.from(asciiArr).toString('ascii')
             } else {
                 const jpBuf = Buffer.from(jpHexArr.slice(idx, idx + 2).join(''), 'hex')
                 const curJp = iconv.decode(jpBuf, 'sjis')

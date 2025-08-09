@@ -3,10 +3,10 @@ const path = require('path')
 const { buffer2Hex } = require('../utils')
 const CONFIG = require('../config.js')
 
-const { tableFile, refDir, REG_JP_HEX, jpHex2Jp } = CONFIG
-createTable(tableFile, refDir, REG_JP_HEX, jpHex2Jp)
+const { tableFile, refDir, REG_JP_HEX, simplifyJpHex,jpHex2Jp } = CONFIG
+createTable(tableFile, refDir, REG_JP_HEX, simplifyJpHex, jpHex2Jp)
 
-function createTable(tableFile, refDir, REG_JP_HEX, jpHex2Jp) {
+function createTable(tableFile, refDir, REG_JP_HEX, simplifyJpHex, jpHex2Jp) {
     const table = []
     const files = fs.readdirSync(refDir)
     for (const file of files) {
@@ -20,7 +20,8 @@ function createTable(tableFile, refDir, REG_JP_HEX, jpHex2Jp) {
         }
         for (const match of matches) {
             const buf = Buffer.from(match, 'latin1')
-            const jpHex = buffer2Hex(buf)
+            let jpHex = buffer2Hex(buf)
+            jpHex = simplifyJpHex(jpHex)
             const jp = jpHex2Jp(jpHex)
             const item = {
                 file,
