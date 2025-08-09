@@ -90,6 +90,17 @@ module.exports = {
         ) {
             jpHexArr.splice(jpHexArr.length - 2, 2)
         }
+        // 去除 jpHexArr 末尾的 ▽△/n 三种符号的组合，它们不需要翻译
+        do {
+            const a = jpHexArr[jpHexArr.length - 2]
+            const b = jpHexArr[jpHexArr.length - 1]
+            if (b === 'A5') {
+                jpHexArr.pop()
+            } else if ((a === '81' && b === 'A4') || (a === '81' && b === 'A2')) {
+                jpHexArr.pop()
+                jpHexArr.pop()
+            } else break
+        } while(true)
         return jpHexArr.join(' ')
     },
     jpHex2Jp: (jpHex) => {

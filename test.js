@@ -1,72 +1,31 @@
-// 二进制转译日语程序（保留无法解析的十六进制原文）
+const table = require('./table.json')
 
-const iconv = require('iconv-lite');
+const jps = table.map(item => item.jp)
 
-// 输入十六进制文本内容
-const hexInput = `
-AA 23 D0 73 65 24 81 40 81 40 81 40 81 40 81 40
-81 40 81 40 81 40 81 40 21 20 00 81 73 81 64 83
-73 83 93 83 7C 81 60 83 93 81 64 81 74 A5 81 A2
-`;
+const UP = '△'
+const DN = '▽'
+const jpsWithUp = jps.filter(jp => jp.includes(UP))
+const jpsWithDown = jps.filter(jp => jp.includes(DN))
+console.log(jpsWithUp.length, jpsWithDown.length)
 
-// 1. 整理成单行模式
-const hexLine = hexInput.replace(/\s+/g, ' ').trim();
+// 没有同时包含 UP 和 DN 符号的文本
+// const jpsWithUpAndDown = jps.filter(jp => jp.includes(UP) && jp.includes(DN))
+// console.log(jpsWithUpAndDown.length)
 
-// 2. 拆分为字节数组
-const hexArr = hexLine.split(' ').map(h => parseInt(h, 16));
-
-// 3. 解析
-let output = '';
-let isLastJp = true;
-for (let i = 0; i < hexArr.length;) {
-    const cur = hexArr[i];
-    if ((cur >= 0x81 && cur <= 0x9F) || (cur >= 0xE0 && cur <= 0xFC)) {
-        // 双字节sjis
-        if (i + 1 < hexArr.length) {
-            const bytes = Buffer.from([cur, hexArr[i + 1]]);
-            output += (!isLastJp ? '\n' : '') + iconv.decode(bytes, 'shift_jis');
-            i += 2;
-            isLastJp = true;
-        } else {
-            // 末尾单字节，无法解析，保留原文
-            output += hexArr[i].toString(16).toUpperCase().padStart(2, '0') + ' ';
-            i++;
-        }
-    } else if (cur >= 0x2D && cur <= 0x7F) {
-        // 单字节转为 0x81, (0x72 + cur)
-        const bytes = Buffer.from([0x82, 0x72 + cur]);
-        output += (!isLastJp ? '\n' : '') + iconv.decode(bytes, 'shift_jis');
-        i++;
-        isLastJp = true;
-    } else if (cur === 0xA5) {
-        output += (!isLastJp ? '\n' : '') + '\n';
-        i++;
-        isLastJp = true;
-    } else if (cur === 0x21) {
-        // 处理 0x21 开头的 ascii 片段，直到 0x00 为止
-        let asciiArr = []
-        i++
-        while (i < hexArr.length && parseInt(hexArr[i], 16) !== 0x00) {
-            asciiArr.push(parseInt(hexArr[i], 16))
-            i += 1
-        }
-        // 跳过 0x00
-        if (i < hexArr.length && parseInt(hexArr[i], 16) === 0x00) {
-            i += 1
-        }
-        output += (!isLastJp ? '\n' : '') + Buffer.from(asciiArr).toString('ascii')
-        isLastJp = true
-    } else {
-        // 其他字节，保留原文
-        output += (isLastJp ? '\n' : '') + hexArr[i].toString(16).toUpperCase().padStart(2, '0') + ' ';
-        i++;
-        isLastJp = false;
+// 所有 ▽ 的文本，▽ 都是跟换行组合在最后面
+const jpsWithDownNotEndsWithDownOrNewline = jpsWithDown.filter(jp => {
+    while(jp.endsWith(DN) || jp.endsWith('\n')) {
+        jp = jp.slice(0, -1)
     }
-}
+    return jp.includes(DN)
+})
+console.log(jpsWithDownNotEndsWithDownOrNewline)
 
-// 去除末尾多余空格
-output = output.trim();
-
-// 打印结果
-console.log(output);
-
+// 所有 △ 的文本，△ 都是跟换行组合在最后面
+const jpsWithUpNotEndsWithUpOrNewline = jpsWithUp.filter(jp => {
+    while(jp.endsWith(UP) || jp.endsWith('\n')) {
+        jp = jp.slice(0, -1)
+    }
+    return jp.includes(UP)
+})
+console.log(jpsWithUpNotEndsWithUpOrNewline)
