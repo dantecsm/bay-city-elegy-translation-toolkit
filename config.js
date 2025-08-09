@@ -31,6 +31,8 @@ module.exports = {
                         idx += 2
                     } else if (parseInt(param, 16) >= 0x29 && parseInt(param, 16) <= 0x2C) {
                         idx += 2
+                    } else {
+                        // 即 C3/C5 后的字节不属于 [23-27], 28, [29-2C] 三种分支
                     }
                 }
                 jpHexArr.splice(0, idx)

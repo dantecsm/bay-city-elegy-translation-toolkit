@@ -4,9 +4,9 @@ const iconv = require('iconv-lite');
 
 // 输入十六进制文本内容
 const hexInput = `
-AA 23 C5 23 28 10 C5 24 28 10 88 A4 89 B9 81 71
-81 63 81 63 81 63 81 63 81 63 81 63 81 63 97 49
-81 72 A5 81 A2 AB
+AA 23 D0 73 65 24 81 40 81 40 81 40 81 40 81 40
+81 40 81 40 81 40 81 40 21 20 00 81 73 81 64 83
+73 83 93 83 7C 81 60 83 93 81 64 81 74 A5 81 A2
 `;
 
 // 1. 整理成单行模式
@@ -18,7 +18,7 @@ const hexArr = hexLine.split(' ').map(h => parseInt(h, 16));
 // 3. 解析
 let output = '';
 let isLastJp = true;
-for (let i = 0; i < hexArr.length; ) {
+for (let i = 0; i < hexArr.length;) {
     const cur = hexArr[i];
     if ((cur >= 0x81 && cur <= 0x9F) || (cur >= 0xE0 && cur <= 0xFC)) {
         // 双字节sjis
@@ -42,6 +42,20 @@ for (let i = 0; i < hexArr.length; ) {
         output += (!isLastJp ? '\n' : '') + '\n';
         i++;
         isLastJp = true;
+    } else if (cur === 0x21) {
+        // 处理 0x21 开头的 ascii 片段，直到 0x00 为止
+        let asciiArr = []
+        i++
+        while (i < hexArr.length && parseInt(hexArr[i], 16) !== 0x00) {
+            asciiArr.push(parseInt(hexArr[i], 16))
+            i += 1
+        }
+        // 跳过 0x00
+        if (i < hexArr.length && parseInt(hexArr[i], 16) === 0x00) {
+            i += 1
+        }
+        output += (!isLastJp ? '\n' : '') + Buffer.from(asciiArr).toString('ascii')
+        isLastJp = true
     } else {
         // 其他字节，保留原文
         output += (isLastJp ? '\n' : '') + hexArr[i].toString(16).toUpperCase().padStart(2, '0') + ' ';
