@@ -186,13 +186,13 @@ module.exports = {
         // 有 5 种半角符号不用转全角，' ', '(', ')', '!', '?'
         // 实际 [ '!!', ' ', '(', ')', '!?' ]
         const asciis = [' ', '(', ')', '!', '?']
-        const codes = ['212000', '212800', '212900', '212800', '213F00']
+        const codes = ['212000', '212800', '212900', '212100', '213F00']
         cn = 半角转全角(cn, asciis)
         cn = 中文转日区(cn)
         const parts = cn.split('').map(char => {
             const asciiIdx = asciis.indexOf(char)
             if (asciiIdx > -1) {
-                return Buffer.from(codes[asciiIdx])
+                return Buffer.from(codes[asciiIdx], 'hex')
             } else {
                 // 换行翻译为 A5
                 if (char === '\n') {
@@ -211,35 +211,45 @@ module.exports = {
         })
         const cnBuf = Buffer.concat(parts)
         let cnHex = buffer2Hex(cnBuf)
-        if (cnHex.includes('21 28 00 21 28 00') || cnHex.includes('21 28 00 21 3F 00')) {
-            console.log(1)
-        }
-        cnHex = cnHex.replaceAll('21 28 00 21 28 00', '21 28 28 00')
-        cnHex = cnHex.replaceAll('21 28 00 21 3F 00', '21 28 3F 00')
+        cnHex = cnHex.replaceAll('21 21 00 21 21 00', '21 21 21 00')
+        cnHex = cnHex.replaceAll('21 21 00 21 3F 00', '21 21 3F 00')
         return cnHex
     },
     // null 或者 (jpHex, cnHex) => { return { hexProblem, newCnHex } }
-    autoFill: null
-    // autoFill: (jpHex, cnHex) => {
-    //     const jpHexArr = jpHex ? jpHex.split(' ') : []
-    //     const cnHexArr = cnHex ? cnHex.split(' ') : []
-    //     const diffLen = jpHexArr.length - cnHexArr.length
-    //     const isOdd = diffLen % 2 !== 0
-    //     if (isOdd) {
-    //         throw `hex 差值为奇数 ${diffLen}: ${jpHex} 与 ${cnHex}`
-    //     }
-    //     if (diffLen === 0) {
-    //         return { newCnHex: cnHex }
-    //     } else if (diffLen > 0) {
-    //         for (let i = 0; i < diffLen; i++) {
-    //             cnHexArr.push('20')
-    //         }
-    //         const newCnHex = cnHexArr.join(' ')
-    //         return { newCnHex }
-    //     } else {
-    //         const hexProblem = `中文字节数超出 ${-diffLen} 个字节`
-    //         console.log(hexProblem)
-    //         return { hexProblem }
-    //     }
-    // }
+    // autoFill: null
+    autoFill: (jpHex, cnHex) => {
+        const jpHexArr = jpHex ? jpHex.split(' ') : []
+        const cnHexArr = cnHex ? cnHex.split(' ') : []
+        const diffLen = jpHexArr.length - cnHexArr.length
+        if (Math.abs(diffLen) === 1) {
+            // throw `hex 差值为 1： ${jpHex} 与 ${cnHex}`
+        }
+        if (diffLen === 0) {
+            return { newCnHex: cnHex }
+        } else if (diffLen > 0) {
+            // 不断补充 21 00，直到剩下长度为 3 时补充 21 20 00，为 2 时补充 21 00
+            let leftLen = diffLen
+            while (leftLen > 0) {
+                if (leftLen === 1) {
+                    cnHexArr.push('A5')
+                    leftLen -= 1
+                } else if (leftLen === 3) {
+                    cnHexArr.push('21', '20', '00')
+                    leftLen -= 3
+                } else if (leftLen === 2) {
+                    cnHexArr.push('21', '00')
+                    leftLen -= 2
+                } else {
+                    cnHexArr.push('21', '00')
+                    leftLen -= 2
+                }
+            }
+            const newCnHex = cnHexArr.join(' ')
+            return { newCnHex }
+        } else {
+            const hexProblem = `中文字节数超出 ${-diffLen} 个字节`
+            console.log(hexProblem)
+            return { hexProblem }
+        }
+    }
 }

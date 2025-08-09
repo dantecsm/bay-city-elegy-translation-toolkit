@@ -53,3 +53,14 @@ console.log('包含〈但不以〉结尾的数量:', notEndWithThinking.length)
 
 // 非 name 的 message 中可能出现 21 ... 00 的 ascii 字符，只有 ! 和 ？两种，比如
 // 神緒・美夏・梨奈・恵子・希子「悠は、誰が好きなのよ!?」
+
+// 找出所有 hex 长度差值为 1 的 cnHex 与 jpHex
+table.forEach(item => {
+    const { jpHex, cnHex } = item
+    const jpArr = jpHex.split(' ')
+    const cnArr = cnHex.split(' ')
+    const diffLen = cnArr.length - jpArr.length
+    if (Math.abs(diffLen) === 1) {
+        console.log(jpHex)
+    }
+})
