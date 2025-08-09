@@ -20,7 +20,7 @@ const regArray = regs.map(reg => `(${reg}\\x81\\x75[\\s\\S]+?\\x81\\x76|${reg}\\
 const regex1 = /\xAA\x23([\xC3\xC5]([\x23-\x27]|\x28[\s\S]|[\x29-\x2C][\s\S]{2}){2}|\xD0\x73\x65(\x20){0,}(\x22[^\x22]+\x22|[^\x22]([\x23-\x27]|\x28[\s\S]|[\x29-\x2C][\s\S]{2}){0,1})){0,}([\x81-\x9F\xE0-\xFC][\s\S]|[\x2D-\x7F]|[\xA5]|\x21[^\x00]+\x00)+|\x81\x77([\x81-\x9F\xE0-\xFC][\s\S]|[\x2D-\x7F]|[\xA5]|\x21[^\x00]+\x00)+\x81\x78/
 const regex2 = new RegExp(regArray.join('|'))
 const REG_JP_HEX = new RegExp(`(${regex1.source})|(${regex2.source})`, 'g')
-console.log(REG_JP_HEX)
+// console.log(REG_JP_HEX)
 
 // const asciiSet = new Set()
 

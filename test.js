@@ -32,30 +32,30 @@ inputFiles.forEach(file => {
     }
 
     // 写回输出文件
-    // fs.writeFileSync(outputPath, JSON.stringify(outputArr, null, 2), 'utf8')
+    fs.writeFileSync(outputPath, JSON.stringify(outputArr, null, 2), 'utf8')
     console.log(`已处理: ${file}`)
 })
-console.log(Array.from(nameSet))
+// console.log(Array.from(nameSet))
 
-const names = ['愛音', '山崎', '東山', '菅原', ' 悠 ', '(声)', '美夏', ' 客 ', '神緒', 'レポーターＢ', 'レポーターＡ', 'レポーターＣ',
-    '藤島', '恵子', '希子', ' 仁 ', ' 悠 ・希子', '客Ａ', '客Ｂ', '万里子', ' 丈 ', 'ダフ屋', '親衛隊々長', '親衛隊たち', '梨奈',
-    '守衛', '運転手', '悠', '司会', '運転手(声)', '吉川(声)', '吉川', '神緒・美夏', '神緒・美夏・梨奈・恵子・希子'
-]
-const regs = names.map(name => {
-    const hexStr = name.split('').map(char => {
-        if (char === ' ') return '212000'
-        const buf = iconv.encode(char, 'sjis')
-        const hexs = buf.toString('hex')
-        return hexs
-    }).join('')
-    // 把 hexStr 从形如 '8ee7' 改为 '\x8e\xe7' 格式
-    const regStr = hexStr.replace(/([0-9a-fA-F]{2})/g, '\\x$1')
-    return regStr
-})
-console.log(regs)
-const Rs = regs.map(reg => `(${reg}\\x81\\x75[\\s\\S]+?\\x81\\x76|${reg}\\x81\\x71[\\s\\S]+?\\x81\\x72)`)
-const REG_JP_HEX = new RegExp(Rs.join('|'), 'g')
-console.log(REG_JP_HEX)
+// const names = ['愛音', '山崎', '東山', '菅原', ' 悠 ', '(声)', '美夏', ' 客 ', '神緒', 'レポーターＢ', 'レポーターＡ', 'レポーターＣ',
+//     '藤島', '恵子', '希子', ' 仁 ', ' 悠 ・希子', '客Ａ', '客Ｂ', '万里子', ' 丈 ', 'ダフ屋', '親衛隊々長', '親衛隊たち', '梨奈',
+//     '守衛', '運転手', '悠', '司会', '運転手(声)', '吉川(声)', '吉川', '神緒・美夏', '神緒・美夏・梨奈・恵子・希子'
+// ]
+// const regs = names.map(name => {
+//     const hexStr = name.split('').map(char => {
+//         if (char === ' ') return '212000'
+//         const buf = iconv.encode(char, 'sjis')
+//         const hexs = buf.toString('hex')
+//         return hexs
+//     }).join('')
+//     // 把 hexStr 从形如 '8ee7' 改为 '\x8e\xe7' 格式
+//     const regStr = hexStr.replace(/([0-9a-fA-F]{2})/g, '\\x$1')
+//     return regStr
+// })
+// console.log(regs)
+// const Rs = regs.map(reg => `(${reg}\\x81\\x75[\\s\\S]+?\\x81\\x76|${reg}\\x81\\x71[\\s\\S]+?\\x81\\x72)`)
+// const REG_JP_HEX = new RegExp(Rs.join('|'), 'g')
+// console.log(REG_JP_HEX)
 
 const jpMESDir = 'RB_MES'
 const cnMESDir = 'RB_CN_MES'
