@@ -163,9 +163,17 @@ module.exports = {
         const item = { name, message }
         return item
     },
-    nameAndMessage2Text: ({ name, message }) => {
-        const cn = message
-        return cn
+    nameAndMessage2Text: ({ name, message }, jp) => {
+        if (!name) return message
+        const isChat = jp.includes('「')
+        const isThinking = jp.includes('〈')
+        if (isChat) {
+            return `${name}「${message}」`
+        } else if (isThinking) {
+            return `${name}〈${message}〉`
+        } else {
+            throw `非预期的情形：有 name 属性时，该文本要么是对话要么是想法，即原文有 「 或 〈`
+        }
     },
     cn2CnHex: (cn, jpHex) => {
         cn = 半角转全角(cn)

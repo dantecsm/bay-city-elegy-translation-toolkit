@@ -23,7 +23,7 @@ function importCN(tableFile, gtOutputDir) {
             if (jp !== jpText) {
                 throw `${key} 文件的 ${jp} 和 ${gtOutputDir} 结果算出的 ${jpText} 不匹配`
             }
-            const cnText = nameAndMessage2Text({name, message})
+            const cnText = nameAndMessage2Text({name, message}, jp)
             item.cn = cnText
             delete item.problem
             item.problem = problem

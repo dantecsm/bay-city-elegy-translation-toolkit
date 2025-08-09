@@ -39,8 +39,15 @@ console.log(notOptionOrThinkingJps.length)
 const notOptionOrThinkingOrChatJps = notOptionOrThinkingJps.filter(jp => !jp.includes('「'))
 console.log(notOptionOrThinkingOrChatJps)
 
-// 说明了 「 和 」 是成对的，〈 和 〉也是成对的
+// 证明 「 和 」 是成对的，〈 和 〉也是成对的
 const a = jps.filter(jp => jp.includes('「') && !jp.includes('」'))
 console.log(a.length)
 const b = jps.filter(jp => jp.includes('〈') && !jp.includes('〉'))
 console.log(b.length)
+
+// 证明所有包含「的文本，必以」结尾，所有包含〈的文本，必以〉结尾
+const notEndWithChat = jps.filter(jp => jp.includes('「') && !jp.endsWith('」'))
+console.log('包含「但不以」结尾的数量:', notEndWithChat.length)
+const notEndWithThinking = jps.filter(jp => jp.includes('〈') && !jp.endsWith('〉'))
+console.log('包含〈但不以〉结尾的数量:', notEndWithThinking.length)
+
