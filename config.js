@@ -17,7 +17,7 @@ module.exports = {
     // 还有一种选项文本，以 『 ... 』 为规律
     // 文字有三种模式，一种是 SJIS，一种是 2D-7F 的 82 72+X 的简写，一种是 A5 换行
     // 需要去除末尾的 81 97，即 @
-    REG_JP_HEX: /\xAA\x23([\xC3\xC5]([\x23-\x27]|\x28[\s\S]|[\x29-\x2C][\s\S]{2}){2}|\xD0\x73\x65(\x20){0,}(\x22[^\x22]+\x22|[^\x22]([\x23-\x27]|\x28[\s\S]|[\x29-\x2C][\s\S]){0,1})){0,}([\x81-\x9F\xE0-\xFC][\s\S]|[\x2D-\x7F]|[\xA5]|\x21[^\x00]+\x00)+|\x81\x77([\x81-\x9F\xE0-\xFC][\s\S]|[\x2D-\x7F]|[\xA5]|\x21[^\x00]+\x00)+\x81\x78/g,
+    REG_JP_HEX: /\xAA\x23([\xC3\xC5]([\x23-\x27]|\x28[\s\S]|[\x29-\x2C][\s\S]{2}){2}|\xD0\x73\x65(\x20){0,}(\x22[^\x22]+\x22|[^\x22]([\x23-\x27]|\x28[\s\S]|[\x29-\x2C][\s\S]{2}){0,1})){0,}([\x81-\x9F\xE0-\xFC][\s\S]|[\x2D-\x7F]|[\xA5]|\x21[^\x00]+\x00)+|\x81\x77([\x81-\x9F\xE0-\xFC][\s\S]|[\x2D-\x7F]|[\xA5]|\x21[^\x00]+\x00)+\x81\x78/g,
     simplifyJpHex: (jpHex) => {
         const jpHexArr = jpHex.split(' ')
 
@@ -38,7 +38,7 @@ module.exports = {
                     } else if (parseInt(param, 16) === 0x28) {
                         idx += 2
                     } else if (parseInt(param, 16) >= 0x29 && parseInt(param, 16) <= 0x2C) {
-                        idx += 2
+                        idx += 3
                     } else {
                         // 即 C3/C5 后的字节不属于 [23-27], 28, [29-2C] 三种分支
                     }
@@ -69,7 +69,7 @@ module.exports = {
                         } else if (parseInt(param, 16) === 0x28) {
                             idx += 2
                         } else if (parseInt(param, 16) >= 0x29 && parseInt(param, 16) <= 0x2C) {
-                            idx += 2
+                            idx += 3
                         } else {
                             // 即 C3/C5 后的字节不属于 [23-27], 28, [29-2C] 三种分支
                         }
