@@ -194,7 +194,19 @@ module.exports = {
             if (asciiIdx > -1) {
                 return Buffer.from(codes[asciiIdx])
             } else {
-                return iconv.encode(char, 'sjis')
+                // 换行翻译为 A5
+                if (char === '\n') {
+                    return Buffer.from([0xA5])
+                }
+                // 82 72+[2D-7F] 的翻译为 [2D-7F]
+                const sjis = iconv.encode(char, 'sjis')
+                const [a, b] = sjis
+                if (a === 0x82 && (b >= 0x72 + 0x2D && b <= 0x72 + 0x7F)) {
+                    const byte = b - 0x72
+                    return Buffer.from([byte])
+                } else {
+                    return sjis
+                }
             }
         })
         const cnBuf = Buffer.concat(parts)
@@ -214,7 +226,7 @@ module.exports = {
     //     const diffLen = jpHexArr.length - cnHexArr.length
     //     const isOdd = diffLen % 2 !== 0
     //     if (isOdd) {
-    //         throw `hex 差值为奇数: ${jpHex} 与 ${cnHex}`
+    //         throw `hex 差值为奇数 ${diffLen}: ${jpHex} 与 ${cnHex}`
     //     }
     //     if (diffLen === 0) {
     //         return { newCnHex: cnHex }
