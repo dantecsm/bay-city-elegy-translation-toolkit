@@ -147,7 +147,7 @@ module.exports = {
             const firstQuoteIdx = jp.indexOf('「')
             const lastQuoteIdx = jp.lastIndexOf('」')
             if (firstQuoteIdx !== -1 && lastQuoteIdx !== -1 && lastQuoteIdx > firstQuoteIdx) {
-                name = jp.slice(0, firstQuoteIdx).trim()
+                name = jp.slice(0, firstQuoteIdx)
                 message = jp.slice(firstQuoteIdx + 1, lastQuoteIdx)
             }
         } else if (jp.includes('〈')) {
@@ -156,7 +156,7 @@ module.exports = {
             const firstAngleIdx = jp.indexOf('〈')
             const lastAngleIdx = jp.lastIndexOf('〉')
             if (firstAngleIdx !== -1 && lastAngleIdx !== -1 && lastAngleIdx > firstAngleIdx) {
-                name = jp.slice(0, firstAngleIdx).trim()
+                name = jp.slice(0, firstAngleIdx)
                 message = jp.slice(firstAngleIdx + 1, lastAngleIdx)
             }
         }

@@ -1,53 +1,33 @@
-const table = require('./table.json')
+const fs = require('fs')
+const path = require('path')
 
-const jps = table.map(item => item.jp)
+const gtInputDir = 'gt_input'
+const gtOutputDir = 'gt_output'
 
-const UP = '△'
-const DN = '▽'
-const jpsWithUp = jps.filter(jp => jp.includes(UP))
-const jpsWithDown = jps.filter(jp => jp.includes(DN))
-console.log(jpsWithUp.length, jpsWithDown.length)
+// 读取 gt_input 目录下所有文件
+const inputFiles = fs.readdirSync(gtInputDir)
 
-// 没有同时包含 UP 和 DN 符号的文本
-// const jpsWithUpAndDown = jps.filter(jp => jp.includes(UP) && jp.includes(DN))
-// console.log(jpsWithUpAndDown.length)
-
-// 所有 ▽ 的文本，▽ 都是跟换行组合在最后面
-const jpsWithDownNotEndsWithDownOrNewline = jpsWithDown.filter(jp => {
-    while(jp.endsWith(DN) || jp.endsWith('\n')) {
-        jp = jp.slice(0, -1)
+inputFiles.forEach(file => {
+    const inputPath = path.join(gtInputDir, file)
+    const outputPath = path.join(gtOutputDir, file)
+    if (!fs.existsSync(outputPath)) {
+        console.warn(`未找到输出文件: ${outputPath}`)
+        return
     }
-    return jp.includes(DN)
-})
-console.log(jpsWithDownNotEndsWithDownOrNewline)
+    // 读取输入和输出文件
+    const inputArr = JSON.parse(fs.readFileSync(inputPath, 'utf8'))
+    const outputArr = JSON.parse(fs.readFileSync(outputPath, 'utf8'))
 
-// 所有 △ 的文本，△ 都是跟换行组合在最后面
-const jpsWithUpNotEndsWithUpOrNewline = jpsWithUp.filter(jp => {
-    while(jp.endsWith(UP) || jp.endsWith('\n')) {
-        jp = jp.slice(0, -1)
+    // 遍历输出数组，为每个成员添加原名和原文字段
+    for (let i = 0; i < outputArr.length; i++) {
+        const a = inputArr[i]
+        const b = outputArr[i]
+        // 处理 a 可能没有 name 字段的情况
+        b['原名'] = a.hasOwnProperty('name') ? a.name : ''
+        b['原文'] = a.message
     }
-    return jp.includes(UP)
+
+    // 写回输出文件
+    fs.writeFileSync(outputPath, JSON.stringify(outputArr, null, 2), 'utf8')
+    console.log(`已处理: ${file}`)
 })
-console.log(jpsWithUpNotEndsWithUpOrNewline)
-
-// 『〈「
-console.log(jps.length)
-const notOptionJps = jps.filter(jp => !jp.includes('『'))
-console.log(notOptionJps.length)
-const notOptionOrThinkingJps = notOptionJps.filter(jp => !jp.includes('〈'))
-console.log(notOptionOrThinkingJps.length)
-const notOptionOrThinkingOrChatJps = notOptionOrThinkingJps.filter(jp => !jp.includes('「'))
-console.log(notOptionOrThinkingOrChatJps)
-
-// 证明 「 和 」 是成对的，〈 和 〉也是成对的
-const a = jps.filter(jp => jp.includes('「') && !jp.includes('」'))
-console.log(a.length)
-const b = jps.filter(jp => jp.includes('〈') && !jp.includes('〉'))
-console.log(b.length)
-
-// 证明所有包含「的文本，必以」结尾，所有包含〈的文本，必以〉结尾
-const notEndWithChat = jps.filter(jp => jp.includes('「') && !jp.endsWith('」'))
-console.log('包含「但不以」结尾的数量:', notEndWithChat.length)
-const notEndWithThinking = jps.filter(jp => jp.includes('〈') && !jp.endsWith('〉'))
-console.log('包含〈但不以〉结尾的数量:', notEndWithThinking.length)
-

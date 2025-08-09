@@ -19,7 +19,7 @@ function importCN(tableFile, gtOutputDir) {
         items.forEach((item, idx) => {
             const { 原名, 原文, name, message, problem } = data[idx]
             const { jp, cn } = item
-            const jpText = nameAndMessage2Text({name: 原名, message: 原文})
+            const jpText = nameAndMessage2Text({name: 原名, message: 原文}, jp)
             if (jp !== jpText) {
                 throw `${key} 文件的 ${jp} 和 ${gtOutputDir} 结果算出的 ${jpText} 不匹配`
             }
