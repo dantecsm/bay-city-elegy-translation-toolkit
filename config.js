@@ -1,6 +1,8 @@
 const iconv = require('iconv-lite')
 const { buffer2Hex, 半角转全角, 中文转日区 } = require('./utils')
 
+// const asciiSet = new Set()
+
 module.exports = {
     tableFile: 'table.json',
     refDir: 'RB_MES',
@@ -128,7 +130,12 @@ module.exports = {
                 if (idx < jpHexArr.length && parseInt(jpHexArr[idx], 16) === 0x00) {
                     idx += 1
                 }
-                jp += Buffer.from(asciiArr).toString('ascii')
+
+                const ascii = Buffer.from(asciiArr).toString('ascii')
+                // 统计 ascii 字符
+                // asciiSet.add(ascii)
+                // console.log(Array.from(asciiSet))
+                jp += ascii
             } else {
                 const jpBuf = Buffer.from(jpHexArr.slice(idx, idx + 2).join(''), 'hex')
                 const curJp = iconv.decode(jpBuf, 'sjis')
@@ -176,33 +183,51 @@ module.exports = {
         }
     },
     cn2CnHex: (cn, jpHex) => {
-        cn = 半角转全角(cn)
+        // 有 5 种半角符号不用转全角，' ', '(', ')', '!', '?'
+        // 实际 [ '!!', ' ', '(', ')', '!?' ]
+        const asciis = [' ', '(', ')', '!', '?']
+        const codes = ['212000', '212800', '212900', '212800', '213F00']
+        cn = 半角转全角(cn, asciis)
         cn = 中文转日区(cn)
-        const cnBuf = iconv.encode(cn, 'sjis')
-        const cnHex = buffer2Hex(cnBuf)
+        const parts = cn.split('').map(char => {
+            const asciiIdx = asciis.indexOf(char)
+            if (asciiIdx > -1) {
+                return Buffer.from(codes[asciiIdx])
+            } else {
+                return iconv.encode(char, 'sjis')
+            }
+        })
+        const cnBuf = Buffer.concat(parts)
+        let cnHex = buffer2Hex(cnBuf)
+        if (cnHex.includes('21 28 00 21 28 00') || cnHex.includes('21 28 00 21 3F 00')) {
+            console.log(1)
+        }
+        cnHex = cnHex.replaceAll('21 28 00 21 28 00', '21 28 28 00')
+        cnHex = cnHex.replaceAll('21 28 00 21 3F 00', '21 28 3F 00')
         return cnHex
     },
     // null 或者 (jpHex, cnHex) => { return { hexProblem, newCnHex } }
-    autoFill: (jpHex, cnHex) => {
-        const jpHexArr = jpHex ? jpHex.split(' ') : []
-        const cnHexArr = cnHex ? cnHex.split(' ') : []
-        const diffLen = jpHexArr.length - cnHexArr.length
-        const isOdd = diffLen % 2 !== 0
-        if (isOdd) {
-            throw `hex 差值为奇数: ${jpHex} 与 ${cnHex}`
-        }
-        if (diffLen === 0) {
-            return { newCnHex: cnHex }
-        } else if (diffLen > 0) {
-            for (let i = 0; i < diffLen; i++) {
-                cnHexArr.push('20')
-            }
-            const newCnHex = cnHexArr.join(' ')
-            return { newCnHex }
-        } else {
-            const hexProblem = `中文字节数超出 ${-diffLen} 个字节`
-            console.log(hexProblem)
-            return { hexProblem }
-        }
-    }
+    autoFill: null
+    // autoFill: (jpHex, cnHex) => {
+    //     const jpHexArr = jpHex ? jpHex.split(' ') : []
+    //     const cnHexArr = cnHex ? cnHex.split(' ') : []
+    //     const diffLen = jpHexArr.length - cnHexArr.length
+    //     const isOdd = diffLen % 2 !== 0
+    //     if (isOdd) {
+    //         throw `hex 差值为奇数: ${jpHex} 与 ${cnHex}`
+    //     }
+    //     if (diffLen === 0) {
+    //         return { newCnHex: cnHex }
+    //     } else if (diffLen > 0) {
+    //         for (let i = 0; i < diffLen; i++) {
+    //             cnHexArr.push('20')
+    //         }
+    //         const newCnHex = cnHexArr.join(' ')
+    //         return { newCnHex }
+    //     } else {
+    //         const hexProblem = `中文字节数超出 ${-diffLen} 个字节`
+    //         console.log(hexProblem)
+    //         return { hexProblem }
+    //     }
+    // }
 }

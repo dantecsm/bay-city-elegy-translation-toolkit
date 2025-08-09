@@ -51,3 +51,5 @@ console.log('包含「但不以」结尾的数量:', notEndWithChat.length)
 const notEndWithThinking = jps.filter(jp => jp.includes('〈') && !jp.endsWith('〉'))
 console.log('包含〈但不以〉结尾的数量:', notEndWithThinking.length)
 
+// 非 name 的 message 中可能出现 21 ... 00 的 ascii 字符，只有 ! 和 ？两种，比如
+// 神緒・美夏・梨奈・恵子・希子「悠は、誰が好きなのよ!?」
