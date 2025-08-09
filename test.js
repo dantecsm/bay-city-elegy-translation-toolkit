@@ -5,7 +5,7 @@ const gtInputDir = 'gt_input'
 const gtOutputDir = 'gt_output'
 
 // 读取 gt_input 目录下所有文件
-const inputFiles = fs.readdirSync(gtInputDir)
+// const inputFiles = fs.readdirSync(gtInputDir)
 
 // inputFiles.forEach(file => {
 //     const inputPath = path.join(gtInputDir, file)

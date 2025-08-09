@@ -216,40 +216,40 @@ module.exports = {
         return cnHex
     },
     // null 或者 (jpHex, cnHex) => { return { hexProblem, newCnHex } }
-    // autoFill: null
-    autoFill: (jpHex, cnHex) => {
-        const jpHexArr = jpHex ? jpHex.split(' ') : []
-        const cnHexArr = cnHex ? cnHex.split(' ') : []
-        const diffLen = jpHexArr.length - cnHexArr.length
-        if (Math.abs(diffLen) === 1) {
-            // throw `hex 差值为 1： ${jpHex} 与 ${cnHex}`
-        }
-        if (diffLen === 0) {
-            return { newCnHex: cnHex }
-        } else if (diffLen > 0) {
-            // 不断补充 21 00，直到剩下长度为 3 时补充 21 20 00，为 2 时补充 21 00
-            let leftLen = diffLen
-            while (leftLen > 0) {
-                if (leftLen === 1) {
-                    cnHexArr.push('A5')
-                    leftLen -= 1
-                } else if (leftLen === 3) {
-                    cnHexArr.push('21', '20', '00')
-                    leftLen -= 3
-                } else if (leftLen === 2) {
-                    cnHexArr.push('21', '00')
-                    leftLen -= 2
-                } else {
-                    cnHexArr.push('21', '00')
-                    leftLen -= 2
-                }
-            }
-            const newCnHex = cnHexArr.join(' ')
-            return { newCnHex }
-        } else {
-            const hexProblem = `中文字节数超出 ${-diffLen} 个字节`
-            console.log(hexProblem)
-            return { hexProblem }
-        }
-    }
+    autoFill: null
+    // autoFill: (jpHex, cnHex) => {
+    //     const jpHexArr = jpHex ? jpHex.split(' ') : []
+    //     const cnHexArr = cnHex ? cnHex.split(' ') : []
+    //     const diffLen = jpHexArr.length - cnHexArr.length
+    //     if (Math.abs(diffLen) === 1) {
+    //         // throw `hex 差值为 1： ${jpHex} 与 ${cnHex}`
+    //     }
+    //     if (diffLen === 0) {
+    //         return { newCnHex: cnHex }
+    //     } else if (diffLen > 0) {
+    //         // 不断补充 21 00，直到剩下长度为 3 时补充 21 20 00，为 2 时补充 21 00
+    //         let leftLen = diffLen
+    //         while (leftLen > 0) {
+    //             if (leftLen === 1) {
+    //                 cnHexArr.push('A5')
+    //                 leftLen -= 1
+    //             } else if (leftLen === 3) {
+    //                 cnHexArr.push('21', '20', '00')
+    //                 leftLen -= 3
+    //             } else if (leftLen === 2) {
+    //                 cnHexArr.push('21', '00')
+    //                 leftLen -= 2
+    //             } else {
+    //                 cnHexArr.push('21', '00')
+    //                 leftLen -= 2
+    //             }
+    //         }
+    //         const newCnHex = cnHexArr.join(' ')
+    //         return { newCnHex }
+    //     } else {
+    //         const hexProblem = `中文字节数超出 ${-diffLen} 个字节`
+    //         console.log(hexProblem)
+    //         return { hexProblem }
+    //     }
+    // }
 }
