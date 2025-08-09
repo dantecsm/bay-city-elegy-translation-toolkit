@@ -13,8 +13,10 @@ module.exports = {
     // 正则解释
     // AA 23 是清理对话框的 OP，非选项文本的开头
     // C3 (){2} 和 C5(){2} 是无关 OP，可以忽略，其中的 () 代表 [23-27], 28 和 [29-2C] 三种分支，分别对应 1, 2, 3 三种长度
+    // D0 73 65 是无关 OP，它对应 D0 73 65，直到第一个非 20，如果是 22 则到下一个 22 结束，如果不是 22 则按照 [23-27], 28 和 [29-2C] 三种分支判断，分别对应 1, 2, 3 三种长度
     // 文字有三种模式，一种是 SJIS，一种是 2D-7F 的 82 72+X 的简写，一种是 A5 换行
-    REG_JP_HEX: /\xAA\x23([\xC3\xC5]([\x23-\x27]|\x28[\s\S]|[\x29-\x2C][\s\S]{2}){2}){0,}([\x81-\x9F\xE0-\xFC][\s\S]|[\x2D-\x7F]|[\xA5]|\x21[^\x00]+\x00)+/g,
+    // 需要去除末尾的 81 97，即 @
+    REG_JP_HEX: /\xAA\x23([\xC3\xC5]([\x23-\x27]|\x28[\s\S]|[\x29-\x2C][\s\S]{2}){2}|\xD0\x73\x65(\x20){0,}(\x22[^\x22]+\x22|[^\x22]([\x23-\x27]|\x28[\s\S]|[\x29-\x2C][\s\S]){0,1})){0,}([\x81-\x9F\xE0-\xFC][\s\S]|[\x2D-\x7F]|[\xA5]|\x21[^\x00]+\x00)+/g,
     simplifyJpHex: (jpHex) => {
         // 去掉前面的 AA 23 和无关 OP
         let jpHexArr = jpHex.split(' ').slice(2)
@@ -36,6 +38,40 @@ module.exports = {
                     }
                 }
                 jpHexArr.splice(0, idx)
+            } else if (op === 'D0') {
+                if (jpHexArr[1] === '73' && jpHexArr[2] === '65') {
+                    idx = 3
+                    // 排除所有连续的 0x20
+                    while (idx < jpHexArr.length) {
+                        const hex = parseInt(jpHexArr[idx], 16)
+                        if (hex === 0x20) {
+                            idx++
+                        } else break
+                    }
+                    if (jpHexArr[idx] === 0x22) {
+                        // 判断是 0x22 的处理，跳过直到下一个 0x22 为止 "..."
+                        idx++
+                        while (jpHexArr[idx] !== 0x22) {
+                            idx++
+                        }
+                        idx++
+                    } else {
+                        // 判断非 0x22 的处理，三分支逻辑
+                        const param = jpHexArr[idx]
+                        if (parseInt(param, 16) >= 0x23 && parseInt(param, 16) <= 0x27) {
+                            idx++
+                        } else if (parseInt(param, 16) === 0x28) {
+                            idx += 2
+                        } else if (parseInt(param, 16) >= 0x29 && parseInt(param, 16) <= 0x2C) {
+                            idx += 2
+                        } else {
+                            // 即 C3/C5 后的字节不属于 [23-27], 28, [29-2C] 三种分支
+                        }
+                    }
+                    jpHexArr.splice(0, idx)
+                } else {
+                    break
+                }
             } else {
                 break
             }
