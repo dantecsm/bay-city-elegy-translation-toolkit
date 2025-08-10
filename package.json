@@ -10,6 +10,7 @@
     "cn": "node utils/importCN.js",
     "cnHex": "node utils/updateCnHex.js",
     "apply": "node utils/apply.js",
-    "all": "yarn cnHex && yarn apply"
+    "hdi": "node importFiles2hdi.js",
+    "all": "yarn cnHex && yarn apply && yarn hdi"
   }
 }

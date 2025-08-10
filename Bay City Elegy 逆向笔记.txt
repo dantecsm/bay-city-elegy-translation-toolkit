@@ -1532,9 +1532,24 @@ BC 对应 16 号函数，之前已有研究
 1. 换行符后面的空格数没有完全对齐，猜测应该根据 name 的长度计算调整
 2. 选项的『 』符号没有检查对齐，或者在翻译前预处理掉
 
+hdi 文件替换研究
+用的是 FAT 规范，参考之前的 FAT 笔记
+104840 开始的 3104 个字节是 RB_MES 的目录项
+每 32 字节一个文件
+
+文件抽取：
+- hdi 文件路径
+- 引导区开始地址
+- 文件起始簇号
+- 文件大小
+- 输出文件名
+python extract_fat_file_with_offset.py "J:\PC98 Files\Bay City Elegy.hdi" 0x9400 0xFD 0x71E MSG00.mes
 
 
+替换 hdi 里被修改的子文件的命令
+python replace_hdi_file.py "J:/PC98 Files/Bay City Elegy_CN.hdi" 0x9400 "//YOKOHAMA/RB_MES/MSG01.MES" "./RB_CN_MES/MSG01.MES"
 
+node replaceHdiFile.js  "J:/PC98 Files/Bay City Elegy_CN.hdi" 0x9400 "//YOKOHAMA/RB_MES/MSG01.MES" "./RB_CN_MES/MSG01.MES"
 
 
 
