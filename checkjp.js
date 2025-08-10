@@ -82,35 +82,10 @@ table.forEach(item => {
     }
 })
 
-// table.forEach(item => {
-//     // 只处理 jp 和 cn 都包含 \n 的情况
-//     if (item.jp && item.cn && item.jp.includes('\n') && item.cn.includes('\n')) {
-//         // 统计 jp 换行前字数
-//         const jpFirstLineLen = item.jp.indexOf('\n');
-//         // 统计 cn 换行前字数
-//         const cnFirstLineLen = item.cn.indexOf('\n');
-
-//         if (jpFirstLineLen !== cnFirstLineLen) {
-//             // 处理 cn，去掉所有 \n 以及紧随其后的所有全角空格
-//             let cnProcessed = item.cn.replace(/(\n[\u3000]*)/g, '');
-//             item.cn = cnProcessed
-//             // 获取 jp 换行前字数为下标前的那个字和之后那个字
-//             let before = cnProcessed[jpFirstLineLen - 1] || '';
-//             let after = cnProcessed[jpFirstLineLen] || '';
-//             let suggest = '';
-//             if (before && after) {
-//                 suggest = `建议在“${before}”和“${after}”之间换行`;
-//             } else if (before) {
-//                 suggest = `建议在“${before}”后换行`;
-//             } else {
-//                 suggest = `无法建议换行位置`;
-//             }
-//             item.note = `jp 换行前字数 = ${jpFirstLineLen}; cn 换行前字数 = ${cnFirstLineLen}; ${suggest}`;
-//         } else {
-//             delete item.note;
-//         }
-//     } else {
-//         delete item.note;
-//     }
-// });
+table.forEach(item => {
+    delete item.note
+    // if (item.jp && item.cn && item.jp.startsWith('レポーター') && item.cn.includes('\n')) {
+    //     item.note = 'jp以レポーター开头且cn含有换行符';
+    // }
+});
 fs.writeFileSync('./table.json', JSON.stringify(table, null, 2))
