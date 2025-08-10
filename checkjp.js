@@ -64,3 +64,12 @@ table.forEach(item => {
         console.log(jpHex)
     }
 })
+
+table.forEach(item => {
+    const { jp, cn } = item
+    if (jp.startsWith('『') && jp.endsWith('』')) {
+        if (!(cn.startsWith('『') && cn.endsWith('』'))) {
+            console.log(`${jp}\n${cn}`)
+        }
+    }
+})
