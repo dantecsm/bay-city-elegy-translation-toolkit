@@ -1,3 +1,4 @@
+const fs = require('fs')
 const table = require('./table.json')
 
 const jps = table.map(item => item.jp)
@@ -14,7 +15,7 @@ console.log(jpsWithUp.length, jpsWithDown.length)
 
 // 所有 ▽ 的文本，▽ 都是跟换行组合在最后面
 const jpsWithDownNotEndsWithDownOrNewline = jpsWithDown.filter(jp => {
-    while(jp.endsWith(DN) || jp.endsWith('\n')) {
+    while (jp.endsWith(DN) || jp.endsWith('\n')) {
         jp = jp.slice(0, -1)
     }
     return jp.includes(DN)
@@ -23,7 +24,7 @@ console.log(jpsWithDownNotEndsWithDownOrNewline)
 
 // 所有 △ 的文本，△ 都是跟换行组合在最后面
 const jpsWithUpNotEndsWithUpOrNewline = jpsWithUp.filter(jp => {
-    while(jp.endsWith(UP) || jp.endsWith('\n')) {
+    while (jp.endsWith(UP) || jp.endsWith('\n')) {
         jp = jp.slice(0, -1)
     }
     return jp.includes(UP)
@@ -31,13 +32,13 @@ const jpsWithUpNotEndsWithUpOrNewline = jpsWithUp.filter(jp => {
 console.log(jpsWithUpNotEndsWithUpOrNewline)
 
 // 『〈「
-console.log(jps.length)
-const notOptionJps = jps.filter(jp => !jp.includes('『'))
-console.log(notOptionJps.length)
-const notOptionOrThinkingJps = notOptionJps.filter(jp => !jp.includes('〈'))
-console.log(notOptionOrThinkingJps.length)
-const notOptionOrThinkingOrChatJps = notOptionOrThinkingJps.filter(jp => !jp.includes('「'))
-console.log(notOptionOrThinkingOrChatJps)
+// console.log(jps.length)
+// const notOptionJps = jps.filter(jp => !jp.includes('『'))
+// console.log(notOptionJps.length)
+// const notOptionOrThinkingJps = notOptionJps.filter(jp => !jp.includes('〈'))
+// console.log(notOptionOrThinkingJps.length)
+// const notOptionOrThinkingOrChatJps = notOptionOrThinkingJps.filter(jp => !jp.includes('「'))
+// console.log(notOptionOrThinkingOrChatJps)
 
 // 证明 「 和 」 是成对的，〈 和 〉也是成对的
 const a = jps.filter(jp => jp.includes('「') && !jp.includes('」'))
@@ -80,3 +81,44 @@ table.forEach(item => {
         console.log(`${jp}\n${cn}`)
     }
 })
+// 找出 jp 和 cn 都包含 '\n' 的项，统计每个 '\n' 后面连续的全角空格数量，若数量不一致则打印
+table.forEach(item => {
+    delete item.note
+    const { jp, cn } = item
+    if (jp.includes('\n') && cn.includes('\n')) {
+        // 找出所有 \n 后面连续的全角空格数量
+        // 全角空格是 \u3000
+        const jpMatches = [...jp.matchAll(/\n(　*)/g)]
+        const cnMatches = [...cn.matchAll(/\n(　*)/g)]
+        // 只比对较少一方的全部
+        const minLen = Math.min(jpMatches.length, cnMatches.length)
+        // if (jpMatches.length !== cnMatches.length) {
+        //     console.log('换行数不一致:')
+        //     console.log('jp:', jp)
+        //     console.log('cn:', cn)
+        // }
+        // 检查每个 \n 后面全角空格数量是否一致（只比对较少一方的全部）
+        let notes = []
+        for (let i = 0; i < minLen; i++) {
+            const jpSpaces = jpMatches[i][1].length
+            const cnSpaces = cnMatches[i][1].length
+            if (jpSpaces !== cnSpaces && (jpSpaces !== 7 && jpSpaces !== 6 && jpSpaces !== 2 && jpSpaces !== 5 && jpSpaces !== 4)) {
+                notes.push(`第${i + 1}处 jp 有${jpSpaces}个空格，cn 有${cnSpaces}个空格`)
+            }
+        }
+        if (notes.length > 0) {
+            // 统计 jp 文本第一个 \n 前的字符数，并加到 note 前面
+            let preLen = 0
+            const firstNIndex = jp.indexOf('\n')
+            if (firstNIndex !== -1) {
+                preLen = firstNIndex
+            } else {
+                preLen = jp.length
+            }
+            notes.unshift(`前置字数 = ${preLen}`)
+            item.note = notes.join('；')
+            console.log(item.note)
+        }
+    }
+})
+fs.writeFileSync('./table.json', JSON.stringify(table, null, 2))
