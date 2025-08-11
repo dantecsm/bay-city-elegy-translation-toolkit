@@ -1543,12 +1543,8 @@ hdi 文件替换研究
 - 文件起始簇号
 - 文件大小
 - 输出文件名
-python extract_fat_file_with_offset.py "J:\PC98 Files\Bay City Elegy.hdi" 0x9400 0xFD 0x71E MSG00.mes
-
 
 替换 hdi 里被修改的子文件的命令
-python replace_hdi_file.py "J:/PC98 Files/Bay City Elegy_CN.hdi" 0x9400 "//YOKOHAMA/RB_MES/MSG01.MES" "./RB_CN_MES/MSG01.MES"
-
 node replaceHdiFile.js  "J:/PC98 Files/Bay City Elegy_CN.hdi" 0x9400 "//YOKOHAMA/RB_MES/MSG01.MES" "./RB_CN_MES/MSG01.MES"
 
 剩余问题：
@@ -1596,5 +1592,6 @@ table2Set 中有但 table1Set 中没有的元素：
 ]
 
 英翻已知问题：
-1. 换行数多于原文时，▽ 数量会超出，导致与文本重叠
-2. 换行位置需要同步，换行后空格数量也需要
+1. 一句话的行数(包括一行内因字数过多导致的换行和 \n 换行两种情况)多于原文时，容易导致文本第一行与 ▽ 重叠，需适当删除溢出的 ▽
+2. 英文翻译中，\n 换行符的位置最好调整成与日语 \n 换行符位置同步，避免因为一行内字数过多导致的强制换行
+3. \n 后连续空格的数量也需要根据人名长度适当调整
