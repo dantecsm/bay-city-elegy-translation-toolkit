@@ -1,36 +1,13 @@
 const iconv = require('iconv-lite')
 const { buffer2Hex, 半角转全角, 中文转日区 } = require('./utils')
-
-const names = ['愛音', '山崎', '東山', '菅原', ' 悠 ', '(声)', '美夏', ' 客 ', '神緒', 'レポーターＢ', 'レポーターＡ', 'レポーターＣ',
-    '藤島', '恵子', '希子', ' 仁 ', ' 悠 ・希子', '客Ａ', '客Ｂ', '万里子', ' 丈 ', 'ダフ屋', '親衛隊々長', '親衛隊たち', '梨奈',
-    '守衛', '運転手', '悠', '司会', '運転手(声)', '吉川(声)', '吉川', '神緒・美夏', '神緒・美夏・梨奈・恵子・希子'
-]
-const regs = names.map(name => {
-    const hexStr = name.split('').map(char => {
-        if (char === ' ') return '212000'
-        const buf = iconv.encode(char, 'sjis')
-        const hexs = buf.toString('hex')
-        return hexs
-    }).join('')
-    // 把 hexStr 从形如 '8ee7' 改为 '\x8e\xe7' 格式
-    const regStr = hexStr.replace(/([0-9a-fA-F]{2})/g, '\\x$1')
-    return regStr
-})
-const regArray = regs.map(reg => `(${reg}\\x81\\x75[\\s\\S]+?\\x81\\x76|${reg}\\x81\\x71[\\s\\S]+?\\x81\\x72)`)
-const regex1 = /\xAA\x23([\xC3\xC5]([\x23-\x27]|\x28[\s\S]|[\x29-\x2C][\s\S]{2}){2}|\xD0\x73\x65(\x20){0,}(\x22[^\x22]+\x22|[^\x22]([\x23-\x27]|\x28[\s\S]|[\x29-\x2C][\s\S]{2}){0,1})){0,}([\x81-\x9F\xE0-\xFC][\s\S]|[\x2D-\x7F]|[\xA5]|\x21[^\x00]+\x00)+|\x81\x77([\x81-\x9F\xE0-\xFC][\s\S]|[\x2D-\x7F]|[\xA5]|\x21[^\x00]+\x00)+\x81\x78/
-const regex2 = new RegExp(regArray.join('|'))
-const REG_JP_HEX = new RegExp(`(${regex1.source})|(${regex2.source})`, 'g')
-// console.log(REG_JP_HEX)
-
-// const asciiSet = new Set()
+const REG_JP_HEX = require('genReg')
 
 module.exports = {
     tableFile: 'table.json',
+    enTableFile: 'enTable.json',
     refDir: 'RB_MES',
     destDir: 'RB_CN_MES',
-    // refROM 和 destROM 可以留空，表示不进行修改
-    refROM: '',
-    destROM: '',
+    enDestDir: 'RB_EN_MES',
     gtInputDir: 'gt_input',
     gtOutputDir: 'gt_output',
     // 正则解释
@@ -38,6 +15,7 @@ module.exports = {
     // C3 (){2} 和 C5(){2} 是无关 OP，可以忽略，其中的 () 代表 [23-27], 28 和 [29-2C] 三种分支，分别对应 1, 2, 3 三种长度
     // D0 73 65 是无关 OP，它对应 D0 73 65，直到第一个非 20，如果是 22 则到下一个 22 结束，如果不是 22 则按照 [23-27], 28 和 [29-2C] 三种分支判断，分别对应 1, 2, 3 三种长度
     // 还有一种选项文本，以 『 ... 』 为规律
+    // 有一类地点或拟声文本，以《...》为规律
     // 文字有三种模式，一种是 SJIS，一种是 2D-7F 的 82 72+X 的简写，一种是 A5 换行
     // 需要去除末尾的 81 97，即 @
     // REG_JP_HEX: /\xAA\x23([\xC3\xC5]([\x23-\x27]|\x28[\s\S]|[\x29-\x2C][\s\S]{2}){2}|\xD0\x73\x65(\x20){0,}(\x22[^\x22]+\x22|[^\x22]([\x23-\x27]|\x28[\s\S]|[\x29-\x2C][\s\S]{2}){0,1})){0,}([\x81-\x9F\xE0-\xFC][\s\S]|[\x2D-\x7F]|[\xA5]|\x21[^\x00]+\x00)+|\x81\x77([\x81-\x9F\xE0-\xFC][\s\S]|[\x2D-\x7F]|[\xA5]|\x21[^\x00]+\x00)+\x81\x78/g,
@@ -154,9 +132,6 @@ module.exports = {
                 }
 
                 const ascii = Buffer.from(asciiArr).toString('ascii')
-                // 统计 ascii 字符
-                // asciiSet.add(ascii)
-                // console.log(Array.from(asciiSet))
                 jp += ascii
             } else {
                 const jpBuf = Buffer.from(jpHexArr.slice(idx, idx + 2).join(''), 'hex')
@@ -237,41 +212,11 @@ module.exports = {
         cnHex = cnHex.replaceAll('21 21 00 21 3F 00', '21 21 3F 00')
         return cnHex
     },
+    en2EnHex: (en, jpHex) => {
+        const enBuf = Buffer.from(en)
+        const enHex = '21 ' + buffer2Hex(enBuf) + ' 00'
+        return enHex
+    },
     // null 或者 (jpHex, cnHex) => { return { hexProblem, newCnHex } }
     autoFill: null
-    // autoFill: (jpHex, cnHex) => {
-    //     const jpHexArr = jpHex ? jpHex.split(' ') : []
-    //     const cnHexArr = cnHex ? cnHex.split(' ') : []
-    //     const diffLen = jpHexArr.length - cnHexArr.length
-    //     if (Math.abs(diffLen) === 1) {
-    //         // throw `hex 差值为 1： ${jpHex} 与 ${cnHex}`
-    //     }
-    //     if (diffLen === 0) {
-    //         return { newCnHex: cnHex }
-    //     } else if (diffLen > 0) {
-    //         // 不断补充 21 00，直到剩下长度为 3 时补充 21 20 00，为 2 时补充 21 00
-    //         let leftLen = diffLen
-    //         while (leftLen > 0) {
-    //             if (leftLen === 1) {
-    //                 cnHexArr.push('A5')
-    //                 leftLen -= 1
-    //             } else if (leftLen === 3) {
-    //                 cnHexArr.push('21', '20', '00')
-    //                 leftLen -= 3
-    //             } else if (leftLen === 2) {
-    //                 cnHexArr.push('21', '00')
-    //                 leftLen -= 2
-    //             } else {
-    //                 cnHexArr.push('21', '00')
-    //                 leftLen -= 2
-    //             }
-    //         }
-    //         const newCnHex = cnHexArr.join(' ')
-    //         return { newCnHex }
-    //     } else {
-    //         const hexProblem = `中文字节数超出 ${-diffLen} 个字节`
-    //         console.log(hexProblem)
-    //         return { hexProblem }
-    //     }
-    // }
 }

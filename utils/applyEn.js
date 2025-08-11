@@ -3,7 +3,7 @@ const path = require('path')
 const { replaceBuffer } = require('../utils')
 const CONFIG = require('../config.js')
 
-const { tableFile, refDir, destDir } = CONFIG
+const { enTableFile: tableFile, refDir, enDestDir: destDir } = CONFIG
 applyChanges(tableFile, refDir, destDir)
 
 function applyChanges(tableFile, refDir, destDir) {
@@ -18,10 +18,10 @@ function applyChanges(tableFile, refDir, destDir) {
         let buffer = fs.readFileSync(refPath)
         const items = table.filter(item => item.file === file)
         for (const item of items) {
-            const { jpHex, cnHex } = item
+            const { jpHex, enHex } = item
             const jpBuf = Buffer.from(jpHex.replaceAll(' ', ''), 'hex')
-            const cnBuf = Buffer.from(cnHex.replaceAll(' ', ''), 'hex')
-            buffer = replaceBuffer(buffer, jpBuf, cnBuf)
+            const enBuf = Buffer.from(enHex.replaceAll(' ', ''), 'hex')
+            buffer = replaceBuffer(buffer, jpBuf, enBuf)
         }
         fs.writeFileSync(destPath, buffer)
     }

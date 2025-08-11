@@ -57,18 +57,26 @@ const nameSet = new Set()
 // const REG_JP_HEX = new RegExp(Rs.join('|'), 'g')
 // console.log(REG_JP_HEX)
 
-const jpMESDir = 'RB_MES'
-const cnMESDir = 'RB_CN_MES'
-const files = fs.readdirSync(jpMESDir)
+// const jpMESDir = 'RB_MES'
+// const cnMESDir = 'RB_CN_MES'
+// const files = fs.readdirSync(jpMESDir)
 
-files.forEach(file => {
-    const jpFile = path.join(jpMESDir, file)
-    const cnFile = path.join(cnMESDir, file)
+// files.forEach(file => {
+//     const jpFile = path.join(jpMESDir, file)
+//     const cnFile = path.join(cnMESDir, file)
 
-    const jpStat = fs.statSync(jpFile)
-    const cnStat = fs.statSync(cnFile)
-    if (jpStat.size < cnStat.size) {
-        const diff = cnStat.size - jpStat.size
-        console.log(`文件大小不一致: ${file}，中文文件比日文文件大 ${diff} 字节`)
-    }
+//     const jpStat = fs.statSync(jpFile)
+//     const cnStat = fs.statSync(cnFile)
+//     if (jpStat.size < cnStat.size) {
+//         const diff = cnStat.size - jpStat.size
+//         console.log(`文件大小不一致: ${file}，中文文件比日文文件大 ${diff} 字节`)
+//     }
+// })
+
+const enTableFile = 'enTable.json'
+const enTable = JSON.parse(fs.readFileSync(enTableFile))
+enTable.forEach(item => {
+    item.enHex = ''
+    item.en = item.jp
 })
+fs.writeFileSync(enTableFile, JSON.stringify(enTable, null, 2))

@@ -11,6 +11,11 @@
     "cnHex": "node utils/updateCnHex.js",
     "apply": "node utils/apply.js",
     "hdi": "node importFiles2hdi.js",
-    "all": "yarn cnHex && yarn apply && yarn hdi"
+    "all": "yarn cnHex && yarn apply && yarn hdi",
+
+    "enHex": "node utils/updateEnHex.js",
+    "enApply": "node utils/applyEn.js",
+    "enHdi": "node importFiles2hdi.js en",
+    "enAll": "yarn enHex && yarn enApply && yarn enHdi"
   }
 }

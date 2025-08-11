@@ -23,7 +23,7 @@ function replaceBlock(字节数组字符串, 待替换子字节数组字符串, 
 function replaceBuffer(buffer, subArrayToReplace, replacementSubArray, baseIdx = 0) {
     const startPos = buffer.indexOf(subArrayToReplace, baseIdx)
     if (startPos === -1) {
-        throw new Error(`buffer 找不到待替换区: ${subArrayToReplace}`)
+        throw new Error(`buffer 找不到待替换区: ${buffer2Hex(subArrayToReplace)}`)
     }
 
     const endPos = startPos + subArrayToReplace.length
