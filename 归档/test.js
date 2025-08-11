@@ -73,17 +73,6 @@ const nameSet = new Set()
 //     }
 // })
 
-const enTableFile = '../enTable.json'
-const enTable = JSON.parse(fs.readFileSync(enTableFile))
-// enTable.forEach(item => {
-//     item.enHex = ''
-//     item.en = item.jp
-// })
-// fs.writeFileSync(enTableFile, JSON.stringify(enTable, null, 2))
-enTable.slice(0, 50).map(e => {
-    console.log(e.jp)
-})
-
 // const tableFile1 = '../table.json'
 // const tableFile2 = '../table2.json'
 // const table1 = JSON.parse(fs.readFileSync(tableFile1))
@@ -122,3 +111,27 @@ enTable.slice(0, 50).map(e => {
 // })
 // fs.writeFileSync(tableFile2, JSON.stringify(table2, null, 2))
 
+// const enTableFile = '../enTable.json'
+// const enTable = JSON.parse(fs.readFileSync(enTableFile))
+// enTable.forEach(item => {
+//     item.enHex = ''
+//     item.en = item.jp
+// })
+// fs.writeFileSync(enTableFile, JSON.stringify(enTable, null, 2))
+// const arr = []
+// enTable.slice(0, 50).map(e => {
+//     arr.push({
+//         jp: e.jp,
+//         en: ''
+//     })
+// })
+// console.log(arr)
+
+const enTableFile = '../enTable.json'
+const enTable = JSON.parse(fs.readFileSync(enTableFile))
+console.log(enTable.length)
+const enDemo = require('../enDemo.json')
+enTable.slice(0, 50).forEach((item, index) => {
+    item.en = enDemo[index].en
+})
+fs.writeFileSync(enTableFile, JSON.stringify(enTable, null, 2))

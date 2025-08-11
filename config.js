@@ -213,8 +213,31 @@ module.exports = {
         return cnHex
     },
     en2EnHex: (en, jpHex) => {
-        const enBuf = Buffer.from(en)
-        const enHex = '21 ' + buffer2Hex(enBuf) + ' 00'
+        // Convert en to enBuf, then use buffer2Hex to get enHex
+        // Consecutive ascii characters that can be single-byte are wrapped with 21 and 00, others use sjis double-byte encoding
+        const bufs = []
+        let asciiBuf = []
+        for (let i = 0; i < en.length; i++) {
+            const code = en.charCodeAt(i)
+            if (code >= 0x20 && code <= 0x7E) {
+                // ascii can be single-byte
+                asciiBuf.push(code)
+            } else {
+                // process accumulated ascii first
+                if (asciiBuf.length > 0) {
+                    bufs.push(Buffer.from([0x21, ...asciiBuf, 0x00]))
+                    asciiBuf = []
+                }
+                // non-ascii, encode as sjis
+                bufs.push(iconv.encode(en[i], 'sjis'))
+            }
+        }
+        // process trailing ascii
+        if (asciiBuf.length > 0) {
+            bufs.push(Buffer.from([0x21, ...asciiBuf, 0x00]))
+        }
+        const enBuf = Buffer.concat(bufs)
+        const enHex = buffer2Hex(enBuf)
         return enHex
     },
     // null 或者 (jpHex, cnHex) => { return { hexProblem, newCnHex } }
