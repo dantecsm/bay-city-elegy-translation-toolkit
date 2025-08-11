@@ -153,6 +153,23 @@ const nameSet = new Set()
 // })
 // fs.writeFileSync('../en.json', JSON.stringify(enjp, null, 2))
 
+// const enTableFile = '../enTable.json'
+// const enjpFile = '../en.json'
+// const enTable = JSON.parse(fs.readFileSync(enTableFile))
+// const enjp = JSON.parse(fs.readFileSync(enjpFile))
+// enTable.forEach((item, index) => {
+//     const enjpItem = enjp[index]
+//     if (item.jp !== enjpItem.jp) {
+//         if (!item.jp.startsWith(enjpItem.jp)) {
+//             throw 1
+//         } else {
+//             enjpItem.en += item.jp.slice(enjpItem.jp.length)
+//             enjpItem.jp = item.jp
+//         }
+//     }
+// })
+// fs.writeFileSync(enjpFile, JSON.stringify(enjp, null, 2))
+
 const enTableFile = '../enTable.json'
 const enTable = JSON.parse(fs.readFileSync(enTableFile))
 const enjp = require('../en.json')
