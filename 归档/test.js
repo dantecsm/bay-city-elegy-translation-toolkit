@@ -137,11 +137,30 @@ const nameSet = new Set()
 // enTable.filter(item => !item.en).forEach(item => item.en = item.jp)
 // fs.writeFileSync(enTableFile, JSON.stringify(enTable, null, 2))
 
+// const enTableFile = '../enTable.json'
+// const enjpFile = '../Bay City Elegy.json'
+// const enTable = JSON.parse(fs.readFileSync(enTableFile))
+// console.log(enTable.length)
+// const enjp = enTable.map(item => {
+//     return { message: item.jp }
+// })
+// fs.writeFileSync(enjpFile, JSON.stringify(enjp, null, 2))
+
+// const jp = require('./Bay City Elegy_jp.json')
+// const en = require('./Bay City Elegy_en.json')
+// const enjp = jp.map((item, index) => {
+//     return { jp: item.message, en: en[index].message }
+// })
+// fs.writeFileSync('../en.json', JSON.stringify(enjp, null, 2))
+
 const enTableFile = '../enTable.json'
-const enjpFile = '../en.json'
 const enTable = JSON.parse(fs.readFileSync(enTableFile))
-console.log(enTable.length)
-const enjp = enTable.map(item => {
-    return { jp: item.jp, en: item.en }
+const enjp = require('../en.json')
+enTable.forEach((item, index) => {
+    if (item.jp !== enjp[index].jp) {
+        throw 1
+    } else {
+        item.en = enjp[index].en
+    }
 })
-fs.writeFileSync(enjpFile, JSON.stringify(enjp, null, 2))
+fs.writeFileSync(enTableFile, JSON.stringify(enTable, null, 2))

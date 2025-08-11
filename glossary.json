@@ -1,0 +1,158 @@
+[
+    {
+        "src": "悠",
+        "dst": "Yuu",
+        "info": "Male name, player",
+        "regex": false
+    },
+    {
+        "src": "神緒",
+        "dst": "Kamio",
+        "info": "Female name",
+        "regex": false
+    },
+    {
+        "src": "美夏",
+        "dst": "Mika",
+        "info": "Female name",
+        "regex": false
+    },
+    {
+        "src": "恵子",
+        "dst": "Keiko",
+        "info": "Female name",
+        "regex": false
+    },
+    {
+        "src": "希子",
+        "dst": "Kiko",
+        "info": "Female name",
+        "regex": false
+    },
+    {
+        "src": "梨奈",
+        "dst": "Rina",
+        "info": "Female name",
+        "regex": false
+    },
+    {
+        "src": "万里子",
+        "dst": "Mariko",
+        "info": "Female name",
+        "regex": false
+    },
+    {
+        "src": "かみお",
+        "dst": "Kamio",
+        "info": "Female name",
+        "regex": false
+    },
+    {
+        "src": "愛音",
+        "dst": "Aine",
+        "info": "Female name",
+        "regex": false
+    },
+    {
+        "src": "藤島",
+        "dst": "Fujishima",
+        "info": "Female name",
+        "regex": false
+    },
+    {
+        "src": "麻宮",
+        "dst": "Asamiya",
+        "info": "Female name",
+        "regex": false
+    },
+    {
+        "src": "山崎",
+        "dst": "Yamazaki",
+        "info": "Male name",
+        "regex": false
+    },
+    {
+        "src": "吉川",
+        "dst": "Yoshikawa",
+        "info": "Male name",
+        "regex": false
+    },
+    {
+        "src": "東山",
+        "dst": "Higashiyama",
+        "info": "Male name",
+        "regex": false
+    },
+    {
+        "src": "菅原",
+        "dst": "Sugawara",
+        "info": "Male name",
+        "regex": false
+    },
+    {
+        "src": "竜崎",
+        "dst": "Ryuzaki",
+        "info": "Male surname, player",
+        "regex": false
+    },
+    {
+        "src": "蒔瀬梨奈",
+        "dst": "Makise Rina",
+        "info": "Female name",
+        "regex": false
+    },
+    {
+        "src": "花野万里子",
+        "dst": "Hanano Mariko",
+        "info": "Female name",
+        "regex": false
+    },
+    {
+        "src": "ルシファ",
+        "dst": "Lucifer",
+        "info": "Male name",
+        "regex": false
+    },
+    {
+        "src": "佐野",
+        "dst": "Sano",
+        "info": "Surname",
+        "regex": false
+    },
+    {
+        "src": "榊原",
+        "dst": "Sakakibara",
+        "info": "Surname",
+        "regex": false
+    },
+    {
+        "src": "楚羅",
+        "dst": "Sora",
+        "info": "Location",
+        "regex": false
+    },
+    {
+        "src": "イセザキ町",
+        "dst": "Isezaki Town",
+        "info": "Location",
+        "regex": false
+    },
+    {
+        "src": "フィオリーナ",
+        "dst": "Fiorina",
+        "info": "Location",
+        "regex": false
+    },
+    {
+        "src": "スタジアム",
+        "dst": "Stadium",
+        "info": "",
+        "regex": false
+    },
+    {
+        "src": "ヴェルガント",
+        "dst": "Vergant",
+        "info": "",
+        "regex": false
+    }
+]
