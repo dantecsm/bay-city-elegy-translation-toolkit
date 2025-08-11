@@ -66,26 +66,45 @@ console.log('包含〈但不以〉结尾的数量:', notEndWithThinking.length)
 //     }
 // })
 
-table.forEach(item => {
-    const { jp, cn } = item
-    if (jp.startsWith('『') && jp.endsWith('』')) {
-        if (!(cn.startsWith('『') && cn.endsWith('』'))) {
-            console.log(`${jp}\n${cn}`)
-        }
-    }
-})
+// table.forEach(item => {
+//     const { jp, cn } = item
+//     if (jp.startsWith('『') && jp.endsWith('』')) {
+//         if (!(cn.startsWith('『') && cn.endsWith('』'))) {
+//             console.log(`${jp}\n${cn}`)
+//         }
+//     }
+// })
 
-table.forEach(item => {
-    const { jp, cn } = item
-    if ((cn.includes('『') && !jp.includes('『')) || (cn.includes('』') && !jp.includes('』'))) {
-        console.log(`${jp}\n${cn}`)
-    }
-})
+// table.forEach(item => {
+//     const { jp, cn } = item
+//     if ((cn.includes('『') && !jp.includes('『')) || (cn.includes('』') && !jp.includes('』'))) {
+//         console.log(`${jp}\n${cn}`)
+//     }
+// })
 
 table.forEach(item => {
     delete item.note
-    // if (item.jp && item.cn && item.jp.startsWith('レポーター') && item.cn.includes('\n')) {
-    //     item.note = 'jp以レポーター开头且cn含有换行符';
-    // }
+    // 找到所有以『开始以』结尾的cn，将除了第一个字和最后一个字之外，中间的所有『替换为‘，所有』替换为’
+    if (typeof item.cn === 'string' && item.cn.startsWith('『') && item.cn.endsWith('』')) {
+        // 只处理长度大于2的情况
+        if (item.cn.length > 2) {
+            // 取出第一个和最后一个字符
+            const first = item.cn[0];
+            const last = item.cn[item.cn.length - 1];
+            // 取出中间部分
+            let middle = item.cn.slice(1, -1);
+            // 替换中间部分的『为‘，』为’
+            middle = middle.replace(/『/g, '‘').replace(/』/g, '’');
+            // 拼接回去
+            const newCn = first + middle + last;
+
+            if (newCn !== item.cn) {
+                console.log(item.cn)
+                console.log(newCn)
+                console.log()
+                item.cn = newCn
+            }
+        }
+    }
 });
 fs.writeFileSync('./table.json', JSON.stringify(table, null, 2))
