@@ -134,4 +134,5 @@ const enDemo = require('../enDemo.json')
 enTable.slice(0, 50).forEach((item, index) => {
     item.en = enDemo[index].en
 })
+enTable.filter(item => !item.en).forEach(item => item.en = item.jp)
 fs.writeFileSync(enTableFile, JSON.stringify(enTable, null, 2))
