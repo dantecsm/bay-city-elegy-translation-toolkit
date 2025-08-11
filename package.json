@@ -12,10 +12,13 @@
     "apply": "node utils/apply.js",
     "hdi": "node importFiles2hdi.js",
     "all": "yarn cnHex && yarn apply && yarn hdi",
-
     "enHex": "node utils/updateEnHex.js",
     "enApply": "node utils/applyEn.js",
     "enHdi": "node importFiles2hdi.js en",
     "enAll": "yarn enHex && yarn enApply && yarn enHdi"
+  },
+  "dependencies": {
+    "iconv-lite": "^0.6.3",
+    "sharp": "^0.34.3"
   }
 }
