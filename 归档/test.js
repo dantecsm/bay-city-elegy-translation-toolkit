@@ -151,10 +151,10 @@ const nameSet = new Set()
 // const enjp = jp.map((item, index) => {
 //     return { jp: item.message, en: en[index].message }
 // })
-// fs.writeFileSync('../en.json', JSON.stringify(enjp, null, 2))
+// fs.writeFileSync('./en.json', JSON.stringify(enjp, null, 2))
 
 // const enTableFile = '../enTable.json'
-// const enjpFile = '../en.json'
+// const enjpFile = './en.json'
 // const enTable = JSON.parse(fs.readFileSync(enTableFile))
 // const enjp = JSON.parse(fs.readFileSync(enjpFile))
 // enTable.forEach((item, index) => {
@@ -172,7 +172,7 @@ const nameSet = new Set()
 
 const enTableFile = '../enTable.json'
 const enTable = JSON.parse(fs.readFileSync(enTableFile))
-const enjp = require('../en.json')
+const enjp = require('./en.json')
 enTable.forEach((item, index) => {
     if (item.jp !== enjp[index].jp) {
         throw 1
