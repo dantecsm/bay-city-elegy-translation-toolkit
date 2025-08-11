@@ -1,15 +1,13 @@
 const fs = require('fs')
 const path = require('path')
-const FatImage = require('./replaceHdiFile')
+const FatImage = require('./utils/replaceHdiFile')
 
 const lang = process.argv[2] === 'en' ? 'en' : 'cn'
 
-const hdiFile = lang === 'en' ? "J:/PC98 Files/Bay City Elegy_EN.hdi" : "J:/PC98 Files/Bay City Elegy_CN.hdi"
+const hdiFile = lang === 'en' ? "Bay City Elegy_EN.hdi" : "J:/PC98 Files/Bay City Elegy_CN.hdi"
 const bootSectorOffset = 0x9400
 const newFilesDir = lang === 'en' ? 'RB_EN_MES' : 'RB_CN_MES'
 const targetPathPrefix = '//YOKOHAMA/RB_MES/'
-// "//YOKOHAMA/RB_MES/MSG01.MES"
-// "./RB_CN_MES/MSG01.MES"
 
 const newFiles = fs.readdirSync(newFilesDir)
 const img = new FatImage(hdiFile, bootSectorOffset)
