@@ -33,7 +33,7 @@ npm install
     2. `npm run apply`：根据 `table.json` 中的 `jpHex` 和 `cnHex` 字段，替换 `RB_CN_MES/` 目录下所有 MES 文件的文本。
     3. `npm run hdi`：将 `RB_CN_MES/` 目录下的 MES 文件注入到中文 HDI 文件 `Bay City Elegy_CN.hdi` 中（需要先手动复制原版 hdi 文件为副本，并修改 importFiles2hdi.js 一处对应的文件路径为该副本文件在你电脑的实际路径）。
 
-## Important Folder or Files
+## Important Folder and Files
 - `table.json`: Master table for JP→CN
 - `enTable.json`: Master table for JP→EN
 - `RB_MES/`: Original reference `.MES` files from the game
