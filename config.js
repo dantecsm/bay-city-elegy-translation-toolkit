@@ -232,7 +232,11 @@ module.exports = {
                 if (en[i] === '\n') {
                     bufs.push(Buffer.from([0xA5]))
                 } else {
-                    bufs.push(iconv.encode(en[i], 'sjis'))
+                    const sjis = iconv.encode(en[i], 'sjis')
+                    if (sjis.length !== 2) {
+                        throw new Error(`"${en[i]}" cannot be encoded as ascii or a valid sjis character, sentence: ${en}`)
+                    }
+                    bufs.push(sjis)
                 }
             }
         }
