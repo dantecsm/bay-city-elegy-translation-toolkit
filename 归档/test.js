@@ -73,10 +73,52 @@ const nameSet = new Set()
 //     }
 // })
 
-const enTableFile = 'enTable.json'
+const enTableFile = '../enTable.json'
 const enTable = JSON.parse(fs.readFileSync(enTableFile))
-enTable.forEach(item => {
-    item.enHex = ''
-    item.en = item.jp
+// enTable.forEach(item => {
+//     item.enHex = ''
+//     item.en = item.jp
+// })
+// fs.writeFileSync(enTableFile, JSON.stringify(enTable, null, 2))
+enTable.slice(0, 50).map(e => {
+    console.log(e.jp)
 })
-fs.writeFileSync(enTableFile, JSON.stringify(enTable, null, 2))
+
+// const tableFile1 = '../table.json'
+// const tableFile2 = '../table2.json'
+// const table1 = JSON.parse(fs.readFileSync(tableFile1))
+// const table2 = JSON.parse(fs.readFileSync(tableFile2))
+// const table2Set = new Set()
+// table2.forEach(item => {
+//     const key = `${item.file}→${item.jp}`
+//     table2Set.add(key)
+// })
+// const table1Set = new Set()
+// table1.forEach(item => {
+//     const key = `${item.file}→${item.jp}`
+//     table1Set.add(key)
+// })
+// // 找出 table2Set 中有的但 table1Set 中没有的元素
+// const diff = []
+// table2Set.forEach(key => {
+//     if (!table1Set.has(key)) {
+//         diff.push(key)
+//     }
+// })
+// console.log('table2Set 中有但 table1Set 中没有的元素：')
+// console.log(diff)
+
+// table2.forEach(item => {
+//     const { file, jpHex } = item
+//     const index = table1.findIndex(item1 => item1.file === file && item1.jpHex === jpHex)
+//     if (index < 0) {
+//         throw '找不到'
+//     } else {
+//         const { cn, cnHex } = table1[index]
+//         item.cn = cn
+//         item.cnHex = cnHex
+//         table1.splice(index, 1)
+//     }
+// })
+// fs.writeFileSync(tableFile2, JSON.stringify(table2, null, 2))
+
