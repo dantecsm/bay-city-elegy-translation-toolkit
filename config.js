@@ -1,6 +1,6 @@
 const iconv = require('iconv-lite')
 const { buffer2Hex, 半角转全角, 中文转日区 } = require('./utils')
-const REG_JP_HEX = require('genReg')
+const REG_JP_HEX = require('./genReg')
 
 module.exports = {
     tableFile: 'table.json',
