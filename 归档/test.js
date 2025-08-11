@@ -127,12 +127,21 @@ const nameSet = new Set()
 // })
 // console.log(arr)
 
+// const enTableFile = '../enTable.json'
+// const enTable = JSON.parse(fs.readFileSync(enTableFile))
+// console.log(enTable.length)
+// const enDemo = require('../enDemo.json')
+// enTable.slice(0, 50).forEach((item, index) => {
+//     item.en = enDemo[index].en
+// })
+// enTable.filter(item => !item.en).forEach(item => item.en = item.jp)
+// fs.writeFileSync(enTableFile, JSON.stringify(enTable, null, 2))
+
 const enTableFile = '../enTable.json'
+const enjpFile = '../en.json'
 const enTable = JSON.parse(fs.readFileSync(enTableFile))
 console.log(enTable.length)
-const enDemo = require('../enDemo.json')
-enTable.slice(0, 50).forEach((item, index) => {
-    item.en = enDemo[index].en
+const enjp = enTable.map(item => {
+    return { jp: item.jp, en: item.en }
 })
-enTable.filter(item => !item.en).forEach(item => item.en = item.jp)
-fs.writeFileSync(enTableFile, JSON.stringify(enTable, null, 2))
+fs.writeFileSync(enjpFile, JSON.stringify(enjp, null, 2))
