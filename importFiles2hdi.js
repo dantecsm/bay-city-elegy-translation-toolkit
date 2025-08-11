@@ -18,3 +18,4 @@ for (const newFile of newFiles) {
     img.replaceFile(targetPath, newFileBuffer)
 }
 img.close()
+console.log(`０６．已将翻译后的文件导入到 ${hdiFile}`)

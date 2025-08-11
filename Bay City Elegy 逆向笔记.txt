@@ -1551,11 +1551,27 @@ python replace_hdi_file.py "J:/PC98 Files/Bay City Elegy_CN.hdi" 0x9400 "//YOKOH
 
 node replaceHdiFile.js  "J:/PC98 Files/Bay City Elegy_CN.hdi" 0x9400 "//YOKOHAMA/RB_MES/MSG01.MES" "./RB_CN_MES/MSG01.MES"
 
+剩余问题：
+1. 演唱会
+2. 部分未翻译文本,一些地名
+3. 文本润色
 
+对应的应该是 RB_STAG1.MES，RB_STAG2.MES，RB_STAG3.MES，RB_STAG4.MES
+MSG37.MES, MSG61.MES
 
+MSG24.MES 有
+《―イセザキ町―》
+81 73 81 5C 83 43 83 5A 83 55 83 4C 92 AC 81 5C 81 74
 
+MSG31.MES 有
+《―‘フィオリーナ’―》
+81 73 81 5C 81 65 83 74 83 42 83 49 83 8A 81 5B 83 69 81 66 81 5C 81 74
 
+MSG25.MES
+MSG26.MES
+MSG27.MES
+MSG57.MES
+《‥ガランガラン‥》
+81 73 81 64 83 4B 83 89 83 93 83 4B 83 89 83 93 81 64 81 74
 
-
-
-
+之前的正则搜索漏了一种 《》的情形
