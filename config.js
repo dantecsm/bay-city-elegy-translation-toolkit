@@ -228,8 +228,12 @@ module.exports = {
                     bufs.push(Buffer.from([0x21, ...asciiBuf, 0x00]))
                     asciiBuf = []
                 }
-                // non-ascii, encode as sjis
-                bufs.push(iconv.encode(en[i], 'sjis'))
+                // non-ascii
+                if (en[i] === '\n') {
+                    bufs.push(Buffer.from([0xA5]))
+                } else {
+                    bufs.push(iconv.encode(en[i], 'sjis'))
+                }
             }
         }
         // process trailing ascii
