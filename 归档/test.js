@@ -2,9 +2,9 @@ const fs = require('fs')
 const path = require('path')
 const iconv = require('iconv-lite')
 
-const gtInputDir = 'gt_input'
-const gtOutputDir = 'gt_output'
-const nameSet = new Set()
+// const gtInputDir = 'gt_input'
+// const gtOutputDir = 'gt_output'
+// const nameSet = new Set()
 
 // 读取 gt_input 目录下所有文件
 // const inputFiles = fs.readdirSync(gtInputDir)
@@ -170,14 +170,33 @@ const nameSet = new Set()
 // })
 // fs.writeFileSync(enjpFile, JSON.stringify(enjp, null, 2))
 
+// const enTableFile = '../enTable.json'
+// const enTable = JSON.parse(fs.readFileSync(enTableFile))
+// const enjp = require('./en.json')
+// enTable.forEach((item, index) => {
+//     if (item.jp !== enjp[index].jp) {
+//         throw 1
+//     } else {
+//         item.en = enjp[index].en
+//     }
+// })
+// fs.writeFileSync(enTableFile, JSON.stringify(enTable, null, 2))
+
 const enTableFile = '../enTable.json'
 const enTable = JSON.parse(fs.readFileSync(enTableFile))
-const enjp = require('./en.json')
-enTable.forEach((item, index) => {
-    if (item.jp !== enjp[index].jp) {
-        throw 1
-    } else {
-        item.en = enjp[index].en
+enTable.forEach((item) => {
+    const en = item.en
+    let endIdx = en.length - 1
+    while (en[endIdx] === ('\n') || en[endIdx] === ('▽') || en[endIdx] === ('△')) {
+        endIdx -= 1
+    }
+    let part1 = en.slice(0, endIdx + 1)
+    let part2 = en.slice(endIdx + 1)
+    if (part1.includes('"') && part1.endsWith('」')) {
+        // 将 part1 最后的字符替换为英文双引号
+        part1 = part1.slice(0, -1) + '"'
+        const newEn = part1 + part2
+        item.en = newEn
     }
 })
 fs.writeFileSync(enTableFile, JSON.stringify(enTable, null, 2))
