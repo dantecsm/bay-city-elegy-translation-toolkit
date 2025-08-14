@@ -190,13 +190,17 @@ enTable.forEach((item) => {
     while (en[endIdx] === ('\n') || en[endIdx] === ('▽') || en[endIdx] === ('△')) {
         endIdx -= 1
     }
-    let part1 = en.slice(0, endIdx + 1)
-    let part2 = en.slice(endIdx + 1)
-    part1 = part1.replace(/\n/g, '')
-    part1 = part1.replace(/(?!^)(\u3000{2,})(?!$)/g, '')
-    const newEn = part1 + part2
-    if (newEn !== en) {
-        item.en = newEn
+    // let part1 = en.slice(0, endIdx + 1)
+    // let part2 = en.slice(endIdx + 1)
+    // part1 = part1.replace(/\n/g, '')
+    // part1 = part1.replace(/(?!^)(\u3000{2,})(?!$)/g, '')
+    // const newEn = part1 + part2
+    // if (newEn !== en) {
+    //     item.en = newEn
+    // }
+    if (en.includes('　')) {
+        // 将 en 中所有全角空格替换为半角空格
+        item.en = en.replace(/　/g, ' ')
     }
 })
 fs.writeFileSync(enTableFile, JSON.stringify(enTable, null, 2))
