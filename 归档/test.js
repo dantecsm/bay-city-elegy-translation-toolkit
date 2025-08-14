@@ -190,17 +190,38 @@ enTable.forEach((item) => {
     while (en[endIdx] === ('\n') || en[endIdx] === ('▽') || en[endIdx] === ('△')) {
         endIdx -= 1
     }
-    // let part1 = en.slice(0, endIdx + 1)
-    // let part2 = en.slice(endIdx + 1)
-    // part1 = part1.replace(/\n/g, '')
-    // part1 = part1.replace(/(?!^)(\u3000{2,})(?!$)/g, '')
-    // const newEn = part1 + part2
-    // if (newEn !== en) {
-    //     item.en = newEn
-    // }
-    if (en.includes('　')) {
-        // 将 en 中所有全角空格替换为半角空格
-        item.en = en.replace(/　/g, ' ')
+    let part1 = en.slice(0, endIdx + 1)
+    let part2 = en.slice(endIdx + 1)
+    // estimate lines of part1
+    const part1Len = part1.length
+    const part1Lines = Math.ceil(part1Len / 50)
+
+    // compute lines of part2
+    let part2Lines = 0
+    const reg1 = /\n▽/g
+    const reg2 = /\n△/g
+    const match1 = part2.match(reg1)
+    const match2 = part2.match(reg2)
+    if (match1) part2Lines += match1.length
+    if (match2) part2Lines += match2.length
+
+    const totalLines = part1Lines + part2Lines
+    if (totalLines > 4) {
+        // get overlines and remove \n▽ or \n△ correspondingly
+        let overLines = totalLines - 4;
+        let newPart2 = part2;
+        while (overLines > 0) {
+            if (newPart2.includes('\n▽')) {
+                newPart2 = newPart2.replace('\n▽', '');
+            } else if (newPart2.includes('\n△')) {
+                newPart2 = newPart2.replace('\n△', '');
+            } else {
+                throw new Error(`${en} has no ▽ or △ to remove`);
+            }
+            overLines--;
+        }
+        const newEn = part1 + newPart2;
+        item.en = newEn
     }
 })
 fs.writeFileSync(enTableFile, JSON.stringify(enTable, null, 2))
