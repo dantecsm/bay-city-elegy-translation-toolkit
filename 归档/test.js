@@ -192,10 +192,10 @@ enTable.forEach((item) => {
     }
     let part1 = en.slice(0, endIdx + 1)
     let part2 = en.slice(endIdx + 1)
-    if (part1.includes('"') && part1.endsWith('」')) {
-        // 将 part1 最后的字符替换为英文双引号
-        part1 = part1.slice(0, -1) + '"'
-        const newEn = part1 + part2
+    part1 = part1.replace(/\n/g, '')
+    part1 = part1.replace(/(?!^)(\u3000{2,})(?!$)/g, '')
+    const newEn = part1 + part2
+    if (newEn !== en) {
         item.en = newEn
     }
 })
